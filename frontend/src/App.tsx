@@ -4,6 +4,7 @@ import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
 import Investments from "./pages/Investments";
 import Members from "./pages/Members";
+import Loan from "./pages/Loan";
 
 import "./App.css";
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/investments" element={<Investments />} />
           <Route path="/members" element={<Members />} />
+          <Route path="/loan" element={<Loan />} />
         </Routes>
       </div>
     </BrowserRouter>
