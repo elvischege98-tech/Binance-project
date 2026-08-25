@@ -15,8 +15,8 @@ function Sidebar() {
         <Link to="/loan">🏦 SACCO Loan</Link>
         <Link to="/profit-loss">📊 Profit & Loss</Link>
         <Link to="/distribution">💰 Distribution</Link>
+        <Link to="/records">🧾 Records</Link>
 
-        <a href="#">🧾 Records</a>
         <a href="#">⚙️ Settings</a>
       </nav>
     </aside>
