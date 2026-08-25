@@ -8,6 +8,7 @@ import Loan from "./pages/Loan";
 import ProfitLoss from "./pages/ProfitLoss";
 import Distribution from "./pages/Distribution";
 import Records from "./pages/Records";
+import Settings from "./pages/Settings";
 
 import "./App.css";
 
@@ -25,6 +26,7 @@ function App() {
           <Route path="/profit-loss" element={<ProfitLoss />} />
           <Route path="/distribution" element={<Distribution />} />
           <Route path="/records" element={<Records />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </div>
     </BrowserRouter>
