@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Dashboard from "./components/Dashboard";
 import Investments from "./pages/Investments";
+import Members from "./pages/Members";
 
 import "./App.css";
 
@@ -15,6 +16,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/investments" element={<Investments />} />
+          <Route path="/members" element={<Members />} />
         </Routes>
       </div>
     </BrowserRouter>
