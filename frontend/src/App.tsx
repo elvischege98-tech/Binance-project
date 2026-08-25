@@ -5,6 +5,7 @@ import Dashboard from "./components/Dashboard";
 import Investments from "./pages/Investments";
 import Members from "./pages/Members";
 import Loan from "./pages/Loan";
+import ProfitLoss from "./pages/ProfitLoss";
 
 import "./App.css";
 
@@ -19,6 +20,7 @@ function App() {
           <Route path="/investments" element={<Investments />} />
           <Route path="/members" element={<Members />} />
           <Route path="/loan" element={<Loan />} />
+          <Route path="/profit-loss" element={<ProfitLoss />} />
         </Routes>
       </div>
     </BrowserRouter>
