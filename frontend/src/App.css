@@ -219,3 +219,303 @@ body {
   padding-top: 20px;
   font-size: 18px;
 }
+
+/* Distribution */
+
+.distribution-input {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+}
+
+.distribution-input h2 {
+  margin-bottom: 5px;
+}
+
+.distribution-input p {
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+
+.profit-input {
+  display: flex;
+  align-items: center;
+  width: 300px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f9fafb;
+}
+
+.profit-input span {
+  padding: 12px;
+  background: #e5e7eb;
+  font-weight: bold;
+}
+
+.profit-input input {
+  border: none;
+  outline: none;
+  padding: 12px;
+  font-size: 18px;
+  width: 100%;
+  background: white;
+}
+
+.loan-note {
+  margin-top: 12px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.status.warning {
+  color: #d97706;
+}
+
+/* Records */
+
+.record-form {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.record-form h2 {
+  margin-bottom: 20px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #374151;
+}
+
+.form-group input,
+.form-group select {
+  padding: 11px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 15px;
+  background: white;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #374151;
+}
+
+.full-width {
+  grid-column: span 2;
+}
+
+.add-record-button {
+  margin-top: 20px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #111827;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.add-record-button:hover {
+  background: #374151;
+}
+
+.records-section {
+  margin-bottom: 35px;
+}
+
+.records-section h2 {
+  margin-bottom: 15px;
+}
+
+.records-table-container {
+  background: white;
+  border-radius: 12px;
+  overflow-x: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.records-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.records-table th,
+.records-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.records-table th {
+  background: #f9fafb;
+  font-size: 14px;
+  color: #374151;
+}
+
+.records-table td {
+  font-size: 14px;
+}
+
+.records-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.delete-button {
+  border: none;
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 7px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
+  background: #fecaca;
+}
+
+.empty-records {
+  background: white;
+  padding: 30px;
+  text-align: center;
+  color: #6b7280;
+}
+
+/* ============================= */
+/* SETTINGS PAGE */
+/* ============================= */
+
+.settings-section {
+  margin-top: 28px;
+}
+
+.settings-section h2 {
+  margin-bottom: 14px;
+  color: #172033;
+  font-size: 24px;
+}
+
+.settings-card {
+  background: white;
+  border-radius: 14px;
+  padding: 8px 22px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.setting-row {
+  min-height: 74px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.setting-info h3 {
+  margin: 0 0 5px;
+  font-size: 17px;
+  color: #172033;
+}
+
+.setting-info p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.setting-input {
+  width: 90px;
+  height: 38px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 15px;
+  outline: none;
+}
+
+.setting-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.input-with-symbol {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-with-symbol span {
+  color: #64748b;
+}
+
+.setting-total {
+  min-height: 58px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+}
+
+.valid-total {
+  color: #16a34a;
+}
+
+.invalid-total {
+  color: #dc2626;
+}
+
+.active-status {
+  color: #16a34a;
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
+  margin-top: 25px;
+  margin-bottom: 40px;
+}
+
+.save-settings-btn {
+  border: none;
+  background: #2563eb;
+  color: white;
+  padding: 11px 22px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.save-settings-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+
+.save-message {
+  color: #16a34a;
+  font-size: 14px;
+  font-weight: 600;
+}

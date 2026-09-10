@@ -1,4 +1,30 @@
+import { useState } from "react";
+
 function Distribution() {
+  // Main settings
+  const [monthlyProfit, setMonthlyProfit] = useState(20000);
+
+  const loanPayment = monthlyProfit >= 7000 ? 7000 : 0;
+
+  const remainingProfit = Math.max(monthlyProfit - loanPayment, 0);
+
+  // Remaining profit allocation
+  const reinvestmentPercentage = 50;
+  const takeHomePercentage = 50;
+
+  const reinvestment =
+    remainingProfit * (reinvestmentPercentage / 100);
+
+  const takeHome =
+    remainingProfit * (takeHomePercentage / 100);
+
+  // Member ownership
+  const youPercentage = 50;
+  const broPercentage = 50;
+
+  const yourShare = takeHome * (youPercentage / 100);
+  const broShare = takeHome * (broPercentage / 100);
+
   return (
     <main className="dashboard">
       <header className="dashboard-header">
@@ -8,49 +34,94 @@ function Distribution() {
         </div>
       </header>
 
+      {/* Profit Input */}
+      <section className="distribution-input">
+        <h2>Monthly Profit</h2>
+
+        <p>
+          Enter the total profit made this month.
+        </p>
+
+        <div className="profit-input">
+          <span>KES</span>
+
+          <input
+            type="number"
+            value={monthlyProfit}
+            onChange={(e) =>
+              setMonthlyProfit(Number(e.target.value))
+            }
+            min="0"
+          />
+        </div>
+      </section>
+
+      {/* Summary */}
       <section className="summary-cards">
         <div className="card">
           <span>Monthly Profit</span>
-          <h2>KES 20,000</h2>
+          <h2>
+            KES {monthlyProfit.toLocaleString()}
+          </h2>
         </div>
 
         <div className="card">
           <span>Loan Payment</span>
-          <h2>KES 7,000</h2>
+          <h2>
+            KES {loanPayment.toLocaleString()}
+          </h2>
         </div>
 
         <div className="card">
           <span>Reinvestment</span>
-          <h2>KES 7,800</h2>
+          <h2>
+            KES {reinvestment.toLocaleString()}
+          </h2>
         </div>
 
         <div className="card">
           <span>Take-home</span>
-          <h2>KES 5,200</h2>
+          <h2>
+            KES {takeHome.toLocaleString()}
+          </h2>
         </div>
       </section>
 
+      {/* Loan */}
       <section className="loan-section">
         <h2>🏦 Mandatory Loan Payment</h2>
 
         <div className="loan-card">
           <div>
             <span>Monthly Profit</span>
-            <strong>KES 20,000</strong>
+            <strong>
+              KES {monthlyProfit.toLocaleString()}
+            </strong>
           </div>
 
           <div>
             <span>Required Payment</span>
-            <strong>KES 7,000</strong>
+            <strong>
+              KES {loanPayment.toLocaleString()}
+            </strong>
           </div>
 
           <div>
             <span>Status</span>
-            <strong className="status">Required</strong>
+
+            <strong className={loanPayment > 0 ? "status" : "status warning"}>
+              {loanPayment > 0 ? "Required" : "Not Required"}
+            </strong>
           </div>
         </div>
+
+        <p className="loan-note">
+          A KES 7,000 loan payment is automatically required
+          when monthly profit reaches KES 7,000 or more.
+        </p>
       </section>
 
+      {/* Remaining Profit */}
       <section className="members">
         <h2>📊 Remaining Profit Allocation</h2>
 
@@ -59,10 +130,12 @@ function Distribution() {
             <h2>📈 Reinvestment</h2>
 
             <p>Percentage</p>
-            <strong>60%</strong>
+            <strong>{reinvestmentPercentage}%</strong>
 
             <p>Amount</p>
-            <strong>KES 7,800</strong>
+            <strong>
+              KES {reinvestment.toLocaleString()}
+            </strong>
 
             <p>
               Money used to increase our crypto investment.
@@ -73,10 +146,12 @@ function Distribution() {
             <h2>💵 Take-home</h2>
 
             <p>Percentage</p>
-            <strong>40%</strong>
+            <strong>{takeHomePercentage}%</strong>
 
             <p>Amount</p>
-            <strong>KES 5,200</strong>
+            <strong>
+              KES {takeHome.toLocaleString()}
+            </strong>
 
             <p>
               Money available for you and your bro.
@@ -85,23 +160,30 @@ function Distribution() {
         </div>
       </section>
 
+      {/* Member Breakdown */}
       <section className="loan-section">
         <h2>👥 Take-home Breakdown</h2>
 
         <div className="loan-card">
           <div>
-            <span>👤 You — 60%</span>
-            <strong>KES 3,120</strong>
+            <span>👤 You — {youPercentage}%</span>
+            <strong>
+              KES {yourShare.toLocaleString()}
+            </strong>
           </div>
 
           <div>
-            <span>👨‍🦱 Bro — 40%</span>
-            <strong>KES 2,080</strong>
+            <span>👨‍🦱 Bro — {broPercentage}%</span>
+            <strong>
+              KES {broShare.toLocaleString()}
+            </strong>
           </div>
 
           <div>
             <span>Total</span>
-            <strong>KES 5,200</strong>
+            <strong>
+              KES {takeHome.toLocaleString()}
+            </strong>
           </div>
         </div>
       </section>
