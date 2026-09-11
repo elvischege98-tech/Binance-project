@@ -41,7 +41,7 @@ function ProfitLoss() {
             <strong>KES 120,000</strong>
 
             <p>Your Ownership</p>
-            <strong>60%</strong>
+            <strong>50%</strong>
 
             <p>Your Profit</p>
             <strong className="profit">+KES 21,000</strong>
@@ -57,7 +57,7 @@ function ProfitLoss() {
             <strong>KES 80,000</strong>
 
             <p>Bro's Ownership</p>
-            <strong>40%</strong>
+            <strong>50%</strong>
 
             <p>Bro's Profit</p>
             <strong className="profit">+KES 14,000</strong>

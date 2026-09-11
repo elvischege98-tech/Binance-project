@@ -1,72 +1,11 @@
 import { useEffect, useState } from "react";
 
-type RecordType =
-  | "Contribution"
-  | "Purchase"
-  | "Profit"
-  | "Loan Payment"
-  | "Reinvestment"
-  | "Withdrawal";
-
-type InvestmentRecord = {
-  id: number;
-  date: string;
-  person: string;
-  type: RecordType;
-  description: string;
-  amount: number;
-};
-
-const defaultRecords: InvestmentRecord[] = [
-  {
-    id: 1,
-    date: "2026-08-25",
-    person: "You",
-    type: "Contribution",
-    description: "Initial investment contribution",
-    amount: 120000,
-  },
-  {
-    id: 2,
-    date: "2026-08-25",
-    person: "Bro",
-    type: "Contribution",
-    description: "Initial investment contribution",
-    amount: 80000,
-  },
-  {
-    id: 3,
-    date: "2026-08-25",
-    person: "Joint",
-    type: "Purchase",
-    description: "BTC purchase",
-    amount: 200000,
-  },
-  {
-    id: 4,
-    date: "2026-08-30",
-    person: "Joint",
-    type: "Profit",
-    description: "Monthly investment profit",
-    amount: 20000,
-  },
-  {
-    id: 5,
-    date: "2026-08-30",
-    person: "Joint",
-    type: "Loan Payment",
-    description: "Umoja United SACCO",
-    amount: 7000,
-  },
-  {
-    id: 6,
-    date: "2026-08-30",
-    person: "Joint",
-    type: "Reinvestment",
-    description: "Added back to investment",
-    amount: 7800,
-  },
-];
+import {
+  getRecords,
+  saveRecords,
+  type InvestmentRecord,
+  type RecordType,
+} from "../data/investmentData";
 
 function Records() {
   const [showForm, setShowForm] = useState(false);
@@ -75,24 +14,16 @@ function Records() {
   // LOAD RECORDS
   // -----------------------------
 
-  const [records, setRecords] = useState<InvestmentRecord[]>(() => {
-    const savedRecords = localStorage.getItem(
-      "jointInvestRecords"
-    );
-
-    if (savedRecords) {
-      return JSON.parse(savedRecords);
-    }
-
-    return defaultRecords;
-  });
+  const [records, setRecords] = useState<InvestmentRecord[]>(
+    () => getRecords()
+  );
 
   // -----------------------------
   // FORM STATE
   // -----------------------------
 
   const [date, setDate] = useState("");
-  const [person, setPerson] = useState("You");
+  const [person, setPerson] = useState<"You" | "Bro" | "Joint">("You");
 
   const [type, setType] =
     useState<RecordType>("Contribution");
@@ -105,10 +36,11 @@ function Records() {
   // -----------------------------
 
   useEffect(() => {
-    localStorage.setItem(
-      "jointInvestRecords",
-      JSON.stringify(records)
-    );
+     saveRecords(records);
+
+  window.dispatchEvent(
+    new Event("jointInvestRecordsUpdated")
+  );
   }, [records]);
 
   // -----------------------------
@@ -211,25 +143,35 @@ function Records() {
   const totalRecords = records.length;
 
   const totalContributions = records
-    .filter((record) => record.type === "Contribution")
+    .filter(
+      (record) => record.type === "Contribution"
+    )
     .reduce(
       (total, record) => total + record.amount,
       0
     );
 
   const totalProfit = records
-    .filter((record) => record.type === "Profit")
+    .filter(
+      (record) => record.type === "Profit"
+    )
     .reduce(
       (total, record) => total + record.amount,
       0
     );
 
   const totalLoanPayments = records
-    .filter((record) => record.type === "Loan Payment")
+    .filter(
+      (record) => record.type === "Loan Payment"
+    )
     .reduce(
       (total, record) => total + record.amount,
       0
     );
+
+  // -----------------------------
+  // PAGE
+  // -----------------------------
 
   return (
     <main className="dashboard">
@@ -295,9 +237,15 @@ function Records() {
               <select
                 value={person}
                 onChange={(e) =>
-                  setPerson(e.target.value)
+                  setPerson(
+                    e.target.value as
+                      | "You"
+                      | "Bro"
+                      | "Joint"
+                  )
                 }
               >
+
                 <option value="You">
                   👤 You
                 </option>
@@ -309,6 +257,7 @@ function Records() {
                 <option value="Joint">
                   🤝 Joint
                 </option>
+
               </select>
 
             </div>
@@ -328,6 +277,7 @@ function Records() {
                   )
                 }
               >
+
                 <option value="Contribution">
                   Contribution
                 </option>

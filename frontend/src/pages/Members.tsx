@@ -12,7 +12,7 @@ function Members() {
           <strong>KES 120,000</strong>
 
           <p>Ownership</p>
-          <strong>60%</strong>
+          <strong>50%</strong>
 
           <p>Investment Value</p>
           <strong>KES 141,000</strong>
@@ -28,7 +28,7 @@ function Members() {
           <strong>KES 80,000</strong>
 
           <p>Ownership</p>
-          <strong>40%</strong>
+          <strong>50%</strong>
 
           <p>Investment Value</p>
           <strong>KES 94,000</strong>
