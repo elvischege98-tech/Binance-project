@@ -519,3 +519,652 @@ body {
   font-size: 14px;
   font-weight: 600;
 }
+
+/* =========================================
+   JOINT INVEST - GLOBAL STYLES
+========================================= */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  background: #f5f7fb;
+  color: #172033;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+/* =========================================
+   DASHBOARD
+========================================= */
+
+.dashboard {
+  padding: 32px;
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.dashboard-header h1 {
+  font-size: 30px;
+  font-weight: 750;
+  letter-spacing: -0.8px;
+  margin-bottom: 6px;
+}
+
+.dashboard-header p {
+  color: #788398;
+  font-size: 14px;
+}
+
+.profile-button {
+  border: none;
+  background: white;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 650;
+  color: #27324a;
+  box-shadow: 0 5px 18px rgba(31, 41, 55, 0.06);
+  cursor: pointer;
+}
+
+/* =========================================
+   CARD
+========================================= */
+
+.card {
+  background: white;
+  border: 1px solid #e9edf4;
+  border-radius: 18px;
+  box-shadow: 0 8px 30px rgba(31, 41, 55, 0.045);
+}
+
+/* =========================================
+   SECTION LABEL
+========================================= */
+
+.section-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  color: #7b8496;
+  margin-bottom: 8px;
+}
+
+/* =========================================
+   WELCOME
+========================================= */
+
+.investment-welcome {
+  padding: 26px 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+  background:
+    linear-gradient(
+      135deg,
+      #ffffff 0%,
+      #f8faff 100%
+    );
+}
+
+.investment-welcome h2 {
+  font-size: 21px;
+  margin-bottom: 7px;
+}
+
+.investment-welcome p {
+  color: #7b8496;
+  font-size: 14px;
+  max-width: 680px;
+  line-height: 1.6;
+}
+
+.investment-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #edf9f1;
+  color: #249653;
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.investment-status span {
+  font-size: 10px;
+}
+
+/* =========================================
+   SUMMARY CARDS
+========================================= */
+
+.summary-cards {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.investment-summary-card {
+  padding: 23px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.investment-summary-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 14px 32px rgba(31, 41, 55, 0.08);
+}
+
+.investment-summary-card > span {
+  color: #7b8496;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.investment-summary-card h2 {
+  font-size: 25px;
+  margin: 12px 0 6px;
+  letter-spacing: -0.5px;
+}
+
+.investment-summary-card p {
+  color: #9aa2b1;
+  font-size: 12px;
+}
+
+.profit {
+  color: #1eaa62 !important;
+}
+
+/* =========================================
+   YOU + BRO
+========================================= */
+
+.investment-members {
+  display: grid;
+  grid-template-columns:
+    repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 22px;
+}
+
+.member-investment-card {
+  padding: 26px;
+  position: relative;
+  overflow: hidden;
+}
+
+.member-investment-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: #202938;
+}
+
+.member-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 25px;
+}
+
+.member-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 21px;
+}
+
+.you-avatar {
+  background: #edf3ff;
+}
+
+.bro-avatar {
+  background: #f2efff;
+}
+
+.member-label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  font-weight: 800;
+  color: #929aaa;
+  margin-bottom: 3px;
+}
+
+.member-card-header h2 {
+  font-size: 20px;
+  margin-bottom: 3px;
+}
+
+.member-card-header p {
+  color: #8992a3;
+  font-size: 12px;
+}
+
+/* =========================================
+   MEMBER AMOUNT
+========================================= */
+
+.member-main-amount {
+  background: #f8f9fc;
+  border-radius: 13px;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.member-main-amount span {
+  color: #858e9f;
+  font-size: 12px;
+}
+
+.member-main-amount h3 {
+  font-size: 25px;
+  margin-top: 7px;
+}
+
+/* =========================================
+   MEMBER DETAILS
+========================================= */
+
+.member-details {
+  display: grid;
+  grid-template-columns:
+    repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 23px;
+}
+
+.member-details > div {
+  padding: 12px;
+  border: 1px solid #edf0f5;
+  border-radius: 11px;
+}
+
+.member-details span {
+  display: block;
+  font-size: 10px;
+  color: #8d96a7;
+  margin-bottom: 6px;
+}
+
+.member-details strong {
+  font-size: 14px;
+}
+
+/* =========================================
+   PROGRESS
+========================================= */
+
+.member-progress {
+  margin-top: 5px;
+}
+
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 11px;
+  color: #858e9f;
+}
+
+.progress-label strong {
+  color: #30394b;
+}
+
+.progress-bar {
+  height: 8px;
+  width: 100%;
+  background: #edf0f5;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.you-progress {
+  background: #3b82f6;
+}
+
+.bro-progress {
+  background: #7c5cff;
+}
+
+/* =========================================
+   PARTNERSHIP
+========================================= */
+
+.partnership-card {
+  padding: 28px;
+  margin-bottom: 22px;
+}
+
+.partnership-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+.partnership-header h2 {
+  font-size: 21px;
+  margin-bottom: 7px;
+}
+
+.partnership-header p {
+  color: #80899a;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.split-circle {
+  width: 105px;
+  height: 105px;
+  min-width: 105px;
+  border-radius: 50%;
+  background: #f6f7fb;
+  border: 8px solid #e9edf4;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.split-circle strong {
+  font-size: 18px;
+}
+
+.split-circle span {
+  color: #8c95a5;
+  font-size: 9px;
+  margin-top: 3px;
+}
+
+/* =========================================
+   SPLIT
+========================================= */
+
+.split-container {
+  display: grid;
+  grid-template-columns:
+    repeat(2, 1fr);
+  gap: 22px;
+}
+
+.split-person {
+  background: #f9fafc;
+  border-radius: 13px;
+  padding: 17px;
+}
+
+.split-person-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 11px;
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.split-person-top strong {
+  font-size: 14px;
+}
+
+.split-bar {
+  width: 100%;
+  height: 8px;
+  background: #e8ebf1;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.split-fill {
+  height: 100%;
+  background: #202938;
+  border-radius: 999px;
+}
+
+.split-person p {
+  margin-top: 9px;
+  font-size: 11px;
+  color: #8b94a4;
+}
+
+/* =========================================
+   BREAKDOWN
+========================================= */
+
+.investment-breakdown-card {
+  padding: 28px;
+  margin-bottom: 22px;
+}
+
+.section-heading {
+  margin-bottom: 22px;
+}
+
+.section-heading h2 {
+  font-size: 21px;
+  margin-bottom: 7px;
+}
+
+.section-heading p {
+  color: #858e9f;
+  font-size: 13px;
+}
+
+.breakdown-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(4, 1fr);
+  gap: 14px;
+}
+
+.breakdown-item {
+  padding: 18px;
+  border: 1px solid #edf0f5;
+  border-radius: 13px;
+}
+
+.breakdown-item span {
+  display: block;
+  color: #818b9c;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.breakdown-item strong {
+  font-size: 17px;
+}
+
+/* =========================================
+   BINANCE COMING SOON
+========================================= */
+
+.binance-coming-card {
+  padding: 23px 26px;
+  display: flex;
+  align-items: center;
+  gap: 17px;
+  margin-bottom: 20px;
+}
+
+.binance-icon {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  border-radius: 14px;
+  background: #f1f3f7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.binance-coming-card h2 {
+  font-size: 17px;
+  margin-bottom: 5px;
+}
+
+.binance-coming-card p {
+  color: #858e9f;
+  font-size: 12px;
+  line-height: 1.6;
+  max-width: 780px;
+}
+
+.coming-soon {
+  margin-left: auto;
+  white-space: nowrap;
+  background: #f1f3f7;
+  color: #717b8d;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 8px 12px;
+  border-radius: 999px;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 1100px) {
+  .summary-cards {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+
+  .breakdown-grid {
+    grid-template-columns:
+      repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 800px) {
+  .dashboard {
+    padding: 20px;
+  }
+
+  .dashboard-header {
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 25px;
+  }
+
+  .investment-welcome {
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .investment-members {
+    grid-template-columns: 1fr;
+  }
+
+  .partnership-header {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard {
+    padding: 14px;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+  }
+
+  .profile-button {
+    width: 100%;
+  }
+
+  .summary-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .investment-welcome {
+    flex-direction: column;
+  }
+
+  .investment-status {
+    align-self: flex-start;
+  }
+
+  .member-details {
+    grid-template-columns: 1fr;
+  }
+
+  .partnership-header {
+    flex-direction: column;
+  }
+
+  .split-circle {
+    width: 90px;
+    height: 90px;
+    min-width: 90px;
+  }
+
+  .split-container {
+    grid-template-columns: 1fr;
+  }
+
+  .breakdown-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .binance-coming-card {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .coming-soon {
+    margin-left: 0;
+  }
+}
