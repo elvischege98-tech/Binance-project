@@ -1,93 +1,478 @@
+import { useEffect, useState } from "react";
+
+import {
+  getRecords,
+  getSettings,
+  getTotalContributions,
+  getTotalProfit,
+  getTotalWithdrawals,
+  getMemberContribution,
+  type InvestmentRecord,
+  type JointInvestSettings,
+} from "../data/investmentData";
+
 function ProfitLoss() {
+  const [records, setRecords] =
+    useState<InvestmentRecord[]>(
+      getRecords()
+    );
+
+  const [settings, setSettings] =
+    useState<JointInvestSettings>(
+      getSettings()
+    );
+
+  // =====================================================
+  // REFRESH WHEN RECORDS CHANGE
+  // =====================================================
+
+  useEffect(() => {
+    const refreshData = () => {
+      setRecords(getRecords());
+      setSettings(getSettings());
+    };
+
+    window.addEventListener(
+      "jointInvestRecordsUpdated",
+      refreshData
+    );
+
+    window.addEventListener(
+      "jointInvestSettingsUpdated",
+      refreshData
+    );
+
+    return () => {
+      window.removeEventListener(
+        "jointInvestRecordsUpdated",
+        refreshData
+      );
+
+      window.removeEventListener(
+        "jointInvestSettingsUpdated",
+        refreshData
+      );
+    };
+  }, []);
+
+  // =====================================================
+  // MAIN CALCULATIONS
+  // =====================================================
+
+  const totalInvested =
+    getTotalContributions(
+      records
+    );
+
+  const totalProfit =
+    getTotalProfit(records);
+
+  const totalWithdrawals =
+    getTotalWithdrawals(
+      records
+    );
+
+  const currentValue =
+    totalInvested +
+    totalProfit -
+    totalWithdrawals;
+
+  const profitPercentage =
+    totalInvested > 0
+      ? (totalProfit /
+          totalInvested) *
+        100
+      : 0;
+
+  // =====================================================
+  // MEMBER CONTRIBUTIONS
+  // =====================================================
+
+  const yourInvestment =
+    getMemberContribution(
+      records,
+      "You"
+    );
+
+  const broInvestment =
+    getMemberContribution(
+      records,
+      "Bro"
+    );
+
+  // =====================================================
+  // MEMBER PROFIT
+  // =====================================================
+
+  const yourProfit =
+    totalProfit *
+    (settings.youSplit / 100);
+
+  const broProfit =
+    totalProfit *
+    (settings.broSplit / 100);
+
+  // =====================================================
+  // MEMBER CURRENT VALUE
+  // =====================================================
+
+  const yourCurrentValue =
+    yourInvestment +
+    yourProfit;
+
+  const broCurrentValue =
+    broInvestment +
+    broProfit;
+
+  // =====================================================
+  // FORMAT MONEY
+  // =====================================================
+
+  const formatMoney = (
+    amount: number
+  ) => {
+    return `KES ${amount.toLocaleString()}`;
+  };
+
   return (
     <main className="dashboard">
+
+      {/* =================================================
+          HEADER
+      ================================================= */}
+
       <header className="dashboard-header">
+
         <div>
-          <h1>📊 Profit & Loss</h1>
-          <p>Track the performance of our joint crypto investment.</p>
+
+          <h1>
+            📊 Profit & Loss
+          </h1>
+
+          <p>
+            Track the real performance
+            of your joint crypto
+            investment.
+          </p>
+
         </div>
+
       </header>
 
+      {/* =================================================
+          SUMMARY CARDS
+      ================================================= */}
+
       <section className="summary-cards">
+
         <div className="card">
-          <span>Total Invested</span>
-          <h2>KES 200,000</h2>
+
+          <h3>
+            Total Invested
+          </h3>
+
+          <h2>
+            {formatMoney(
+              totalInvested
+            )}
+          </h2>
+
+          <p>
+            From contribution
+            records
+          </p>
+
         </div>
 
         <div className="card">
-          <span>Current Value</span>
-          <h2>KES 235,000</h2>
+
+          <h3>
+            Current Value
+          </h3>
+
+          <h2>
+            {formatMoney(
+              currentValue
+            )}
+          </h2>
+
+          <p>
+            Investment value
+          </p>
+
         </div>
 
         <div className="card">
-          <span>Total Profit</span>
-          <h2 className="profit">+KES 35,000</h2>
+
+          <h3>
+            Total Profit
+          </h3>
+
+          <h2
+            style={{
+              color: "#16a34a",
+            }}
+          >
+            +{formatMoney(
+              totalProfit
+            )}
+          </h2>
+
+          <p>
+            Recorded profit
+          </p>
+
         </div>
 
         <div className="card">
-          <span>Profit Percentage</span>
-          <h2 className="profit">+17.5%</h2>
+
+          <h3>
+            Profit Percentage
+          </h3>
+
+          <h2
+            style={{
+              color: "#16a34a",
+            }}
+          >
+            +{profitPercentage.toFixed(
+              2
+            )}%
+          </h2>
+
+          <p>
+            Return on investment
+          </p>
+
         </div>
+
       </section>
 
-      <section className="members">
-        <h2>Profit Breakdown</h2>
+      {/* =================================================
+          MEMBER BREAKDOWN
+      ================================================= */}
 
-        <div className="member-grid">
-          <div className="member-card">
-            <h2>👤 You</h2>
+      <section
+        style={{
+          marginTop: "25px",
+        }}
+      >
 
-            <p>Your Investment</p>
-            <strong>KES 120,000</strong>
+        <h2>
+          Profit Breakdown
+        </h2>
 
-            <p>Your Ownership</p>
-            <strong>50%</strong>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: "20px",
+            marginTop: "15px",
+          }}
+        >
 
-            <p>Your Profit</p>
-            <strong className="profit">+KES 21,000</strong>
+          {/* =================================================
+              YOU
+          ================================================= */}
 
-            <p>Your Current Value</p>
-            <strong>KES 141,000</strong>
+          <div className="card">
+
+            <h2>
+              👤 You
+            </h2>
+
+            <p>
+              Your Investment
+            </p>
+
+            <strong>
+              {formatMoney(
+                yourInvestment
+              )}
+            </strong>
+
+            <p>
+              Your Ownership
+            </p>
+
+            <strong>
+              {settings.youSplit}%
+            </strong>
+
+            <p>
+              Your Profit
+            </p>
+
+            <strong
+              style={{
+                color: "#16a34a",
+              }}
+            >
+              +{formatMoney(
+                yourProfit
+              )}
+            </strong>
+
+            <p>
+              Your Current Value
+            </p>
+
+            <strong>
+              {formatMoney(
+                yourCurrentValue
+              )}
+            </strong>
+
           </div>
 
-          <div className="member-card">
-            <h2>👨‍🦱 Bro</h2>
+          {/* =================================================
+              BRO
+          ================================================= */}
 
-            <p>Bro's Investment</p>
-            <strong>KES 80,000</strong>
+          <div className="card">
 
-            <p>Bro's Ownership</p>
-            <strong>50%</strong>
+            <h2>
+              👨‍🦱 Bro
+            </h2>
 
-            <p>Bro's Profit</p>
-            <strong className="profit">+KES 14,000</strong>
+            <p>
+              Bro's Investment
+            </p>
 
-            <p>Bro's Current Value</p>
-            <strong>KES 94,000</strong>
+            <strong>
+              {formatMoney(
+                broInvestment
+              )}
+            </strong>
+
+            <p>
+              Bro's Ownership
+            </p>
+
+            <strong>
+              {settings.broSplit}%
+            </strong>
+
+            <p>
+              Bro's Profit
+            </p>
+
+            <strong
+              style={{
+                color: "#16a34a",
+              }}
+            >
+              +{formatMoney(
+                broProfit
+              )}
+            </strong>
+
+            <p>
+              Bro's Current Value
+            </p>
+
+            <strong>
+              {formatMoney(
+                broCurrentValue
+              )}
+            </strong>
+
           </div>
+
         </div>
+
       </section>
 
-      <section className="loan-section">
-        <h2>📈 Investment Performance</h2>
+      {/* =================================================
+          INVESTMENT PERFORMANCE
+      ================================================= */}
 
-        <div className="loan-card">
+      <section
+        style={{
+          marginTop: "25px",
+        }}
+      >
+
+        <h2>
+          📈 Investment Performance
+        </h2>
+
+        <div
+          className="card"
+          style={{
+            marginTop: "15px",
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "20px",
+          }}
+        >
+
           <div>
-            <span>Investment Cost</span>
-            <strong>KES 200,000</strong>
+
+            <p>
+              Investment Cost
+            </p>
+
+            <strong>
+              {formatMoney(
+                totalInvested
+              )}
+            </strong>
+
           </div>
 
           <div>
-            <span>Current Value</span>
-            <strong>KES 235,000</strong>
+
+            <p>
+              Current Value
+            </p>
+
+            <strong>
+              {formatMoney(
+                currentValue
+              )}
+            </strong>
+
           </div>
 
           <div>
-            <span>Profit</span>
-            <strong className="profit">+KES 35,000</strong>
+
+            <p>
+              Profit
+            </p>
+
+            <strong
+              style={{
+                color: "#16a34a",
+              }}
+            >
+              +{formatMoney(
+                totalProfit
+              )}
+            </strong>
+
           </div>
+
+          <div>
+
+            <p>
+              Withdrawals
+            </p>
+
+            <strong>
+              {formatMoney(
+                totalWithdrawals
+              )}
+            </strong>
+
+          </div>
+
         </div>
+
       </section>
+
     </main>
   );
 }

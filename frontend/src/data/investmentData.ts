@@ -1,32 +1,37 @@
+// =====================================================
+// JOINT INVEST - INVESTMENT DATA
+// =====================================================
+
 export type RecordType =
   | "Contribution"
   | "Purchase"
   | "Profit"
+  | "Loan Received"
   | "Loan Payment"
   | "Reinvestment"
   | "Withdrawal";
 
-export type InvestmentRecord = {
+export interface InvestmentRecord {
   id: number;
   date: string;
   person: "You" | "Bro" | "Joint";
   type: RecordType;
   description: string;
   amount: number;
-};
+}
 
-export type JointInvestSettings = {
+export interface JointInvestSettings {
   loanRepayment: number;
   reinvestment: number;
   takeHome: number;
   youSplit: number;
   broSplit: number;
   initialLoan: number;
-};
+}
 
-// ==========================================
-// DEFAULT INVESTMENT RECORDS
-// ==========================================
+// =====================================================
+// DEFAULT RECORDS
+// =====================================================
 
 export const defaultRecords: InvestmentRecord[] = [
   {
@@ -69,13 +74,22 @@ export const defaultRecords: InvestmentRecord[] = [
     id: 5,
     date: "2026-08-30",
     person: "Joint",
-    type: "Loan Payment",
-    description: "Umoja United SACCO",
-    amount: 7000,
+    type: "Loan Received",
+    description: "Umoja United SACCO Loan",
+    amount: 150000,
   },
 
   {
     id: 6,
+    date: "2026-08-30",
+    person: "Joint",
+    type: "Loan Payment",
+    description: "Monthly SACCO repayment",
+    amount: 7000,
+  },
+
+  {
+    id: 7,
     date: "2026-08-30",
     person: "Joint",
     type: "Reinvestment",
@@ -84,9 +98,9 @@ export const defaultRecords: InvestmentRecord[] = [
   },
 ];
 
-// ==========================================
+// =====================================================
 // DEFAULT SETTINGS
-// ==========================================
+// =====================================================
 
 export const defaultSettings: JointInvestSettings = {
   loanRepayment: 7000,
@@ -97,196 +111,273 @@ export const defaultSettings: JointInvestSettings = {
   initialLoan: 150000,
 };
 
-// ==========================================
+// =====================================================
 // RECORD STORAGE
-// ==========================================
+// =====================================================
 
 export function getRecords(): InvestmentRecord[] {
-  const saved = localStorage.getItem("jointInvestRecords");
+  const stored = localStorage.getItem("jointInvestRecords");
 
-  if (!saved) {
+  if (!stored) {
     return defaultRecords;
   }
 
   try {
-    return JSON.parse(saved);
+    const parsed = JSON.parse(stored);
+
+    if (!Array.isArray(parsed)) {
+      return defaultRecords;
+    }
+
+    return parsed;
   } catch {
     return defaultRecords;
   }
 }
 
-export function saveRecords(records: InvestmentRecord[]) {
+export function saveRecords(
+  records: InvestmentRecord[]
+) {
   localStorage.setItem(
     "jointInvestRecords",
     JSON.stringify(records)
   );
+
+  window.dispatchEvent(
+    new Event("jointInvestRecordsUpdated")
+  );
 }
 
-// ==========================================
+// =====================================================
 // SETTINGS STORAGE
-// ==========================================
+// =====================================================
 
 export function getSettings(): JointInvestSettings {
-  const saved = localStorage.getItem("jointInvestSettings");
+  const stored = localStorage.getItem(
+    "jointInvestSettings"
+  );
 
-  if (!saved) {
+  if (!stored) {
     return defaultSettings;
   }
 
   try {
     return {
       ...defaultSettings,
-      ...JSON.parse(saved),
+      ...JSON.parse(stored),
     };
   } catch {
     return defaultSettings;
   }
 }
 
-export function saveSettings(settings: JointInvestSettings) {
+export function saveSettings(
+  settings: JointInvestSettings
+) {
   localStorage.setItem(
     "jointInvestSettings",
     JSON.stringify(settings)
   );
+
+  window.dispatchEvent(
+    new Event("jointInvestSettingsUpdated")
+  );
 }
 
-// ==========================================
-// GENERAL CALCULATIONS
-// ==========================================
+// =====================================================
+// CONTRIBUTIONS
+// =====================================================
 
 export function getTotalContributions(
   records: InvestmentRecord[]
 ): number {
   return records
-    .filter((record) => record.type === "Contribution")
-    .reduce((total, record) => total + record.amount, 0);
+    .filter(
+      (record) => record.type === "Contribution"
+    )
+    .reduce(
+      (total, record) => total + record.amount,
+      0
+    );
 }
-
-// ==========================================
-// MEMBER CONTRIBUTIONS
-// ==========================================
 
 export function getMemberContribution(
   records: InvestmentRecord[],
-  person: "You" | "Bro"
+  member: "You" | "Bro"
 ): number {
   return records
     .filter(
       (record) =>
         record.type === "Contribution" &&
-        record.person === person
+        record.person === member
     )
-    .reduce((total, record) => total + record.amount, 0);
+    .reduce(
+      (total, record) => total + record.amount,
+      0
+    );
 }
 
-// ==========================================
+// =====================================================
 // PURCHASES
-// ==========================================
+// =====================================================
 
 export function getTotalPurchases(
   records: InvestmentRecord[]
 ): number {
   return records
-    .filter((record) => record.type === "Purchase")
-    .reduce((total, record) => total + record.amount, 0);
+    .filter(
+      (record) => record.type === "Purchase"
+    )
+    .reduce(
+      (total, record) => total + record.amount,
+      0
+    );
 }
 
-// ==========================================
-// PROFITS
-// ==========================================
+// =====================================================
+// PROFIT
+// =====================================================
 
 export function getTotalProfit(
   records: InvestmentRecord[]
 ): number {
   return records
-    .filter((record) => record.type === "Profit")
-    .reduce((total, record) => total + record.amount, 0);
+    .filter(
+      (record) => record.type === "Profit"
+    )
+    .reduce(
+      (total, record) => total + record.amount,
+      0
+    );
 }
 
-// ==========================================
-// LOAN PAYMENTS
-// ==========================================
+// =====================================================
+// LOAN
+// =====================================================
+
+export function getTotalLoanReceived(
+  records: InvestmentRecord[]
+): number {
+  return records
+    .filter(
+      (record) => record.type === "Loan Received"
+    )
+    .reduce(
+      (total, record) => total + record.amount,
+      0
+    );
+}
 
 export function getTotalLoanPayments(
   records: InvestmentRecord[]
 ): number {
   return records
-    .filter((record) => record.type === "Loan Payment")
-    .reduce((total, record) => total + record.amount, 0);
+    .filter(
+      (record) => record.type === "Loan Payment"
+    )
+    .reduce(
+      (total, record) => total + record.amount,
+      0
+    );
 }
-
-// ==========================================
-// LOAN BALANCE
-// ==========================================
 
 export function getRemainingLoan(
-  records: InvestmentRecord[],
-  settings: JointInvestSettings
+  records: InvestmentRecord[]
 ): number {
-  const paid = getTotalLoanPayments(records);
+  const received =
+    getTotalLoanReceived(records);
 
-  return Math.max(settings.initialLoan - paid, 0);
+  const paid =
+    getTotalLoanPayments(records);
+
+  return Math.max(received - paid, 0);
 }
 
-// ==========================================
+// =====================================================
 // REINVESTMENT
-// ==========================================
+// =====================================================
 
 export function getTotalReinvestment(
   records: InvestmentRecord[]
 ): number {
   return records
-    .filter((record) => record.type === "Reinvestment")
-    .reduce((total, record) => total + record.amount, 0);
+    .filter(
+      (record) => record.type === "Reinvestment"
+    )
+    .reduce(
+      (total, record) => total + record.amount,
+      0
+    );
 }
 
-// ==========================================
+// =====================================================
 // WITHDRAWALS
-// ==========================================
+// =====================================================
 
 export function getTotalWithdrawals(
   records: InvestmentRecord[]
 ): number {
   return records
-    .filter((record) => record.type === "Withdrawal")
-    .reduce((total, record) => total + record.amount, 0);
+    .filter(
+      (record) => record.type === "Withdrawal"
+    )
+    .reduce(
+      (total, record) => total + record.amount,
+      0
+    );
 }
 
-// ==========================================
+// =====================================================
 // CURRENT INVESTMENT VALUE
-// ==========================================
+// =====================================================
 
 export function getCurrentInvestmentValue(
   records: InvestmentRecord[]
 ): number {
-  const contributions = getTotalContributions(records);
-  const profits = getTotalProfit(records);
-  const withdrawals = getTotalWithdrawals(records);
+  const contributions =
+    getTotalContributions(records);
 
-  return contributions + profits - withdrawals;
+  const profit =
+    getTotalProfit(records);
+
+  const withdrawals =
+    getTotalWithdrawals(records);
+
+  return (
+    contributions +
+    profit -
+    withdrawals
+  );
 }
 
-// ==========================================
-// DISTRIBUTION CALCULATIONS
-// ==========================================
+// =====================================================
+// PROFIT DISTRIBUTION
+// =====================================================
 
 export function getDistributableProfit(
   records: InvestmentRecord[]
 ): number {
-  const profit = getTotalProfit(records);
-  const loanPayment = getTotalLoanPayments(records);
+  const profit =
+    getTotalProfit(records);
 
-  return Math.max(profit - loanPayment, 0);
+  const loanPayments =
+    getTotalLoanPayments(records);
+
+  return Math.max(
+    profit - loanPayments,
+    0
+  );
 }
 
 export function getCalculatedReinvestment(
   records: InvestmentRecord[],
   settings: JointInvestSettings
 ): number {
-  const distributableProfit = getDistributableProfit(records);
+  const profit =
+    getDistributableProfit(records);
 
   return (
-    distributableProfit *
+    profit *
     (settings.reinvestment / 100)
   );
 }
@@ -295,21 +386,21 @@ export function getCalculatedTakeHome(
   records: InvestmentRecord[],
   settings: JointInvestSettings
 ): number {
-  const distributableProfit = getDistributableProfit(records);
+  const profit =
+    getDistributableProfit(records);
 
   return (
-    distributableProfit *
+    profit *
     (settings.takeHome / 100)
   );
 }
-
-// ==========================================
-// MEMBER PROFIT SPLIT
-// ==========================================
 
 export function getMemberProfit(
   amount: number,
   percentage: number
 ): number {
-  return amount * (percentage / 100);
+  return (
+    amount *
+    (percentage / 100)
+  );
 }

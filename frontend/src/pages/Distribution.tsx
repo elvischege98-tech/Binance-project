@@ -1,73 +1,76 @@
-import { useEffect, useState } from "react";
-
-interface JointInvestSettings {
-  loanRepayment: number;
-  reinvestment: number;
-  takeHome: number;
-  youSplit: number;
-  broSplit: number;
-}
+import {
+  getRecords,
+  getSettings,
+  getTotalProfit,
+  getTotalLoanPayments,
+  getTotalReinvestment,
+} from "../data/investmentData";
 
 function Distribution() {
-  // -----------------------------
-  // MONTHLY PROFIT
-  // -----------------------------
-  const [monthlyProfit, setMonthlyProfit] = useState(20000);
+  const records = getRecords();
+  const settings = getSettings();
 
-  // -----------------------------
-  // SETTINGS
-  // -----------------------------
-  const [settings, setSettings] = useState<JointInvestSettings>({
-    loanRepayment: 7000,
-    reinvestment: 60,
-    takeHome: 40,
-    youSplit: 50,
-    broSplit: 50,
-  });
+  // ==========================================
+  // INFORMATION FROM RECORDS
+  // ==========================================
 
-  // -----------------------------
-  // LOAD SETTINGS
-  // -----------------------------
-  useEffect(() => {
-    const savedSettings = localStorage.getItem(
-      "jointInvestSettings"
-    );
+  const monthlyProfit = getTotalProfit(records);
 
-    if (savedSettings) {
-      setSettings(JSON.parse(savedSettings));
-    }
-  }, []);
+  const recordedLoanPayment =
+    getTotalLoanPayments(records);
 
-  // -----------------------------
-  // LOAN CALCULATION
-  // -----------------------------
+  const recordedReinvestment =
+    getTotalReinvestment(records);
+
+  // ==========================================
+  // LOAN PAYMENT RULE
+  // ==========================================
+
   const loanPayment =
     monthlyProfit >= settings.loanRepayment
-      ? settings.loanRepayment
+      ? recordedLoanPayment
       : 0;
 
-  // -----------------------------
+  // ==========================================
   // REMAINING PROFIT
-  // -----------------------------
+  // ==========================================
+
   const remainingProfit = Math.max(
     monthlyProfit - loanPayment,
     0
   );
 
-  // -----------------------------
-  // PROFIT ALLOCATION
-  // -----------------------------
-  const reinvestment =
-    remainingProfit *
-    (settings.reinvestment / 100);
+  // ==========================================
+  // TAKE-HOME
+  // ==========================================
 
-  const takeHome =
-    remainingProfit *
-    (settings.takeHome / 100);
+  const takeHome = Math.max(
+    remainingProfit - recordedReinvestment,
+    0
+  );
 
-  // -----------------------------
-  // MEMBER BREAKDOWN
-  // -----------------------------
+  // ==========================================
+  // ACTUAL REINVESTMENT PERCENTAGE
+  // ==========================================
+
+  const reinvestmentPercentage =
+    remainingProfit > 0
+      ? (recordedReinvestment / remainingProfit) * 100
+      : 0;
+
+  // ==========================================
+  // ACTUAL TAKE-HOME PERCENTAGE
+  // ==========================================
+
+  const takeHomePercentage =
+    remainingProfit > 0
+      ? (takeHome / remainingProfit) * 100
+      : 0;
+
+  // ==========================================
+  // MEMBER TAKE-HOME BREAKDOWN
+  // ==========================================
+
   const yourShare =
     takeHome * (settings.youSplit / 100);
 
@@ -84,44 +87,13 @@ function Distribution() {
       <header className="dashboard-header">
         <div>
           <h1>💰 Profit Distribution</h1>
+
           <p>
-            Decide where our investment profit goes.
+            See how our recorded investment profit
+            is distributed.
           </p>
         </div>
       </header>
-
-
-      {/* ========================= */}
-      {/* PROFIT INPUT */}
-      {/* ========================= */}
-
-      <section className="distribution-input">
-
-        <h2>Monthly Profit</h2>
-
-        <p>
-          Enter the total profit made this month.
-        </p>
-
-        <div className="profit-input">
-
-          <span>KES</span>
-
-          <input
-            type="number"
-            value={monthlyProfit}
-            onChange={(e) =>
-              setMonthlyProfit(
-                Math.max(Number(e.target.value), 0)
-              )
-            }
-            min="0"
-          />
-
-        </div>
-
-      </section>
-
 
       {/* ========================= */}
       {/* SUMMARY CARDS */}
@@ -137,7 +109,6 @@ function Distribution() {
           </h2>
         </div>
 
-
         <div className="card">
           <span>Loan Payment</span>
 
@@ -146,15 +117,13 @@ function Distribution() {
           </h2>
         </div>
 
-
         <div className="card">
           <span>Reinvestment</span>
 
           <h2>
-            KES {reinvestment.toLocaleString()}
+            KES {recordedReinvestment.toLocaleString()}
           </h2>
         </div>
-
 
         <div className="card">
           <span>Take-home</span>
@@ -166,9 +135,8 @@ function Distribution() {
 
       </section>
 
-
       {/* ========================= */}
-      {/* LOAN */}
+      {/* LOAN PAYMENT */}
       {/* ========================= */}
 
       <section className="loan-section">
@@ -185,7 +153,6 @@ function Distribution() {
             </strong>
           </div>
 
-
           <div>
             <span>Required Payment</span>
 
@@ -194,6 +161,13 @@ function Distribution() {
             </strong>
           </div>
 
+          <div>
+            <span>Monthly Target</span>
+
+            <strong>
+              KES {settings.loanRepayment.toLocaleString()}
+            </strong>
+          </div>
 
           <div>
             <span>Status</span>
@@ -206,25 +180,23 @@ function Distribution() {
               }
             >
               {loanPayment > 0
-                ? "Required"
+                ? "Payment Recorded"
                 : "Not Required"}
             </strong>
           </div>
 
         </div>
 
-
         <p className="loan-note">
-
-          A KES {settings.loanRepayment.toLocaleString()} loan
-          payment is automatically required when monthly profit
-          reaches KES {settings.loanRepayment.toLocaleString()}
+          A KES{" "}
+          {settings.loanRepayment.toLocaleString()}{" "}
+          payment is required when monthly profit
+          reaches KES{" "}
+          {settings.loanRepayment.toLocaleString()}{" "}
           or more.
-
         </p>
 
       </section>
-
 
       {/* ========================= */}
       {/* REMAINING PROFIT */}
@@ -236,31 +208,31 @@ function Distribution() {
 
         <div className="member-grid">
 
-
           {/* REINVESTMENT */}
 
           <div className="member-card">
 
             <h2>📈 Reinvestment</h2>
 
-            <p>Percentage</p>
+            <p>Recorded Amount</p>
 
             <strong>
-              {settings.reinvestment}%
+              KES{" "}
+              {recordedReinvestment.toLocaleString()}
             </strong>
 
-            <p>Amount</p>
+            <p>Percentage of Remaining Profit</p>
 
             <strong>
-              KES {reinvestment.toLocaleString()}
+              {reinvestmentPercentage.toFixed(2)}%
             </strong>
 
             <p>
-              Money used to increase our crypto investment.
+              Money added back into our crypto
+              investment.
             </p>
 
           </div>
-
 
           {/* TAKE HOME */}
 
@@ -268,16 +240,16 @@ function Distribution() {
 
             <h2>💵 Take-home</h2>
 
-            <p>Percentage</p>
-
-            <strong>
-              {settings.takeHome}%
-            </strong>
-
-            <p>Amount</p>
+            <p>Available Amount</p>
 
             <strong>
               KES {takeHome.toLocaleString()}
+            </strong>
+
+            <p>Percentage of Remaining Profit</p>
+
+            <strong>
+              {takeHomePercentage.toFixed(2)}%
             </strong>
 
             <p>
@@ -290,7 +262,6 @@ function Distribution() {
 
       </section>
 
-
       {/* ========================= */}
       {/* MEMBER BREAKDOWN */}
       {/* ========================= */}
@@ -301,11 +272,9 @@ function Distribution() {
 
         <div className="loan-card">
 
-
           {/* YOU */}
 
           <div>
-
             <span>
               👤 You — {settings.youSplit}%
             </span>
@@ -313,14 +282,11 @@ function Distribution() {
             <strong>
               KES {yourShare.toLocaleString()}
             </strong>
-
           </div>
-
 
           {/* BRO */}
 
           <div>
-
             <span>
               👨‍🦱 Bro — {settings.broSplit}%
             </span>
@@ -328,26 +294,21 @@ function Distribution() {
             <strong>
               KES {broShare.toLocaleString()}
             </strong>
-
           </div>
-
 
           {/* TOTAL */}
 
           <div>
-
-            <span>Total</span>
+            <span>Total Take-home</span>
 
             <strong>
               KES {takeHome.toLocaleString()}
             </strong>
-
           </div>
 
         </div>
 
       </section>
-
 
       {/* ========================= */}
       {/* DISTRIBUTION SUMMARY */}
@@ -367,7 +328,6 @@ function Distribution() {
             </strong>
           </div>
 
-
           <div>
             <span>Loan Repayment</span>
 
@@ -376,15 +336,21 @@ function Distribution() {
             </strong>
           </div>
 
+          <div>
+            <span>Remaining Profit</span>
+
+            <strong>
+              KES {remainingProfit.toLocaleString()}
+            </strong>
+          </div>
 
           <div>
             <span>Reinvestment</span>
 
             <strong>
-              KES {reinvestment.toLocaleString()}
+              KES {recordedReinvestment.toLocaleString()}
             </strong>
           </div>
-
 
           <div>
             <span>Take-home</span>

@@ -1,163 +1,126 @@
 import { useEffect, useState } from "react";
 
-type RecordType =
-  | "Contribution"
-  | "Purchase"
-  | "Profit"
-  | "Loan Payment"
-  | "Reinvestment"
-  | "Withdrawal";
-
-type InvestmentRecord = {
-  id: number;
-  date: string;
-  person: string;
-  type: RecordType;
-  description: string;
-  amount: number;
-};
+import {
+  getRecords,
+  getSettings,
+  getTotalContributions,
+  getTotalProfit,
+  getTotalWithdrawals,
+  getTotalReinvestment,
+  getTotalLoanPayments,
+  getTotalLoanReceived,
+  getRemainingLoan,
+  getMemberContribution,
+  type InvestmentRecord,
+  type JointInvestSettings,
+} from "../data/investmentData";
 
 function Dashboard() {
-  const [records, setRecords] = useState<InvestmentRecord[]>([]);
+  // =====================================================
+  // DATA
+  // =====================================================
 
-  // Starting SACCO loan
-  const initialLoan = 150000;
+  const [records, setRecords] =
+    useState<InvestmentRecord[]>(getRecords());
 
-  // Load records from localStorage
+  const [settings, setSettings] =
+    useState<JointInvestSettings>(getSettings());
+
+  // =====================================================
+  // AUTOMATICALLY REFRESH WHEN RECORDS CHANGE
+  // =====================================================
+
   useEffect(() => {
-    const savedRecords = localStorage.getItem(
-      "jointInvestRecords"
-    );
-
-    if (savedRecords) {
-      setRecords(JSON.parse(savedRecords));
-    }
-  }, []);
-
-  // Listen for changes when navigating between pages
-  useEffect(() => {
-    const handleStorageChange = () => {
-      const savedRecords = localStorage.getItem(
-        "jointInvestRecords"
-      );
-
-      if (savedRecords) {
-        setRecords(JSON.parse(savedRecords));
-      }
+    const refreshData = () => {
+      setRecords(getRecords());
+      setSettings(getSettings());
     };
 
     window.addEventListener(
-      "storage",
-      handleStorageChange
+      "jointInvestRecordsUpdated",
+      refreshData
+    );
+
+    window.addEventListener(
+      "jointInvestSettingsUpdated",
+      refreshData
     );
 
     return () => {
       window.removeEventListener(
-        "storage",
-        handleStorageChange
+        "jointInvestRecordsUpdated",
+        refreshData
+      );
+
+      window.removeEventListener(
+        "jointInvestSettingsUpdated",
+        refreshData
       );
     };
   }, []);
 
-  // -----------------------------
+  // =====================================================
   // CONTRIBUTIONS
-  // -----------------------------
+  // =====================================================
 
-  const yourContribution = records
-    .filter(
-      (record) =>
-        record.person === "You" &&
-        record.type === "Contribution"
-    )
-    .reduce(
-      (total, record) => total + record.amount,
-      0
-    );
+  const yourContribution =
+    getMemberContribution(records, "You");
 
-  const broContribution = records
-    .filter(
-      (record) =>
-        record.person === "Bro" &&
-        record.type === "Contribution"
-    )
-    .reduce(
-      (total, record) => total + record.amount,
-      0
-    );
+  const broContribution =
+    getMemberContribution(records, "Bro");
 
   const totalInvested =
-    yourContribution + broContribution;
+    getTotalContributions(records);
 
-  // -----------------------------
+  // =====================================================
   // PROFIT
-  // -----------------------------
+  // =====================================================
 
-  const totalProfit = records
-    .filter(
-      (record) => record.type === "Profit"
-    )
-    .reduce(
-      (total, record) => total + record.amount,
-      0
-    );
+  const totalProfit =
+    getTotalProfit(records);
 
-  // -----------------------------
+  // =====================================================
   // WITHDRAWALS
-  // -----------------------------
+  // =====================================================
 
-  const totalWithdrawals = records
-    .filter(
-      (record) => record.type === "Withdrawal"
-    )
-    .reduce(
-      (total, record) => total + record.amount,
-      0
-    );
+  const totalWithdrawals =
+    getTotalWithdrawals(records);
 
-  // -----------------------------
+  // =====================================================
   // REINVESTMENT
-  // -----------------------------
+  // =====================================================
 
-  const totalReinvestment = records
-    .filter(
-      (record) => record.type === "Reinvestment"
-    )
-    .reduce(
-      (total, record) => total + record.amount,
-      0
-    );
+  const totalReinvestment =
+    getTotalReinvestment(records);
 
-  // -----------------------------
-  // LOAN PAYMENTS
-  // -----------------------------
+  // =====================================================
+  // LOAN
+  // =====================================================
 
-  const totalLoanPayments = records
-    .filter(
-      (record) => record.type === "Loan Payment"
-    )
-    .reduce(
-      (total, record) => total + record.amount,
-      0
-    );
+  // IMPORTANT:
+  // Loan amount now comes from Records
+  const totalLoanReceived =
+    getTotalLoanReceived(records);
 
-  const loanRemaining = Math.max(
-    initialLoan - totalLoanPayments,
-    0
-  );
+  const totalLoanPayments =
+    getTotalLoanPayments(records);
 
-  // -----------------------------
+  // Remaining loan also comes from Records
+  const loanRemaining =
+    getRemainingLoan(records);
+
+  // =====================================================
   // CURRENT VALUE
-  // -----------------------------
+  // =====================================================
 
   const currentValue =
     totalInvested +
-    totalProfit +
-    totalReinvestment -
+    totalProfit -
     totalWithdrawals;
 
-  // -----------------------------
+  // =====================================================
   // OWNERSHIP
-  // -----------------------------
+  // =====================================================
 
   const yourOwnership =
     totalInvested > 0
@@ -169,10 +132,24 @@ function Dashboard() {
       ? (broContribution / totalInvested) * 100
       : 0;
 
+  // =====================================================
+  // MONEY FORMAT
+  // =====================================================
+
+  const formatMoney = (amount: number) => {
+    return `KES ${amount.toLocaleString()}`;
+  };
+
+  // =====================================================
+  // PAGE
+  // =====================================================
+
   return (
     <main className="dashboard">
 
-      {/* HEADER */}
+      {/* =================================================
+          HEADER
+      ================================================= */}
 
       <header className="dashboard-header">
 
@@ -190,58 +167,65 @@ function Dashboard() {
 
       </header>
 
-
-      {/* SUMMARY CARDS */}
+      {/* =================================================
+          SUMMARY CARDS
+      ================================================= */}
 
       <section className="summary-cards">
+
+        {/* TOTAL INVESTED */}
 
         <div className="card">
 
           <span>Total Invested</span>
 
           <h2>
-            KES {totalInvested.toLocaleString()}
+            {formatMoney(totalInvested)}
           </h2>
 
         </div>
 
+        {/* CURRENT VALUE */}
 
         <div className="card">
 
           <span>Current Value</span>
 
           <h2>
-            KES {currentValue.toLocaleString()}
+            {formatMoney(currentValue)}
           </h2>
 
         </div>
 
+        {/* PROFIT */}
 
         <div className="card">
 
           <span>Total Profit</span>
 
           <h2 className="profit">
-            +KES {totalProfit.toLocaleString()}
+            +{formatMoney(totalProfit)}
           </h2>
 
         </div>
 
+        {/* LOAN */}
 
         <div className="card">
 
           <span>Loan Remaining</span>
 
           <h2>
-            KES {loanRemaining.toLocaleString()}
+            {formatMoney(loanRemaining)}
           </h2>
 
         </div>
 
       </section>
 
-
-      {/* INVESTMENT BREAKDOWN */}
+      {/* =================================================
+          INVESTMENT BREAKDOWN
+      ================================================= */}
 
       <section className="members">
 
@@ -258,15 +242,15 @@ function Dashboard() {
             <p>Contribution</p>
 
             <strong>
-              KES {yourContribution.toLocaleString()}
+              {formatMoney(yourContribution)}
             </strong>
 
             <p>
-              Ownership: {yourOwnership.toFixed(1)}%
+              Ownership:{" "}
+              {yourOwnership.toFixed(1)}%
             </p>
 
           </div>
-
 
           {/* BRO */}
 
@@ -277,11 +261,12 @@ function Dashboard() {
             <p>Contribution</p>
 
             <strong>
-              KES {broContribution.toLocaleString()}
+              {formatMoney(broContribution)}
             </strong>
 
             <p>
-              Ownership: {broOwnership.toFixed(1)}%
+              Ownership:{" "}
+              {broOwnership.toFixed(1)}%
             </p>
 
           </div>
@@ -290,8 +275,9 @@ function Dashboard() {
 
       </section>
 
-
-      {/* SACCO */}
+      {/* =================================================
+          SACCO
+      ================================================= */}
 
       <section className="loan-section">
 
@@ -299,47 +285,80 @@ function Dashboard() {
 
         <div className="loan-card">
 
+          {/* ORIGINAL LOAN */}
+
           <div>
 
-            <span>Monthly Repayment</span>
+            <span>
+              Original Loan
+            </span>
 
             <strong>
-              KES 7,000
+              {formatMoney(totalLoanReceived)}
             </strong>
 
           </div>
 
+          {/* MONTHLY REPAYMENT */}
 
           <div>
 
-            <span>Paid So Far</span>
+            <span>
+              Monthly Repayment
+            </span>
 
             <strong>
-              KES {totalLoanPayments.toLocaleString()}
+              {formatMoney(
+                settings.loanRepayment
+              )}
             </strong>
 
           </div>
 
+          {/* PAID */}
 
           <div>
 
-            <span>Remaining Loan</span>
+            <span>
+              Paid So Far
+            </span>
 
             <strong>
-              KES {loanRemaining.toLocaleString()}
+              {formatMoney(totalLoanPayments)}
             </strong>
 
           </div>
 
+          {/* REMAINING */}
 
           <div>
 
-            <span>Status</span>
+            <span>
+              Remaining Loan
+            </span>
+
+            <strong>
+              {formatMoney(loanRemaining)}
+            </strong>
+
+          </div>
+
+          {/* STATUS */}
+
+          <div>
+
+            <span>
+              Status
+            </span>
 
             <strong className="status">
-              {loanRemaining > 0
+
+              {totalLoanReceived === 0
+                ? "No Loan"
+                : loanRemaining > 0
                 ? "On Track"
                 : "Paid"}
+
             </strong>
 
           </div>
@@ -348,39 +367,77 @@ function Dashboard() {
 
       </section>
 
-
-      {/* QUICK FINANCIAL SUMMARY */}
+      {/* =================================================
+          QUICK FINANCIAL SUMMARY
+      ================================================= */}
 
       <section className="loan-section">
 
-        <h2>📊 Investment Summary</h2>
+        <h2>
+          📊 Investment Summary
+        </h2>
 
         <div className="loan-card">
 
-          <div>
-            <span>Total Profit</span>
+          {/* PROFIT */}
 
-            <strong>
-              KES {totalProfit.toLocaleString()}
+          <div>
+
+            <span>
+              Total Profit
+            </span>
+
+            <strong className="profit">
+              {formatMoney(totalProfit)}
             </strong>
+
           </div>
 
+          {/* REINVESTMENT */}
 
           <div>
-            <span>Reinvested</span>
+
+            <span>
+              Reinvested
+            </span>
 
             <strong>
-              KES {totalReinvestment.toLocaleString()}
+              {formatMoney(
+                totalReinvestment
+              )}
             </strong>
+
           </div>
 
+          {/* WITHDRAWALS */}
 
           <div>
-            <span>Withdrawn</span>
+
+            <span>
+              Withdrawn
+            </span>
 
             <strong>
-              KES {totalWithdrawals.toLocaleString()}
+              {formatMoney(
+                totalWithdrawals
+              )}
             </strong>
+
+          </div>
+
+          {/* OWNERSHIP */}
+
+          <div>
+
+            <span>
+              Ownership Split
+            </span>
+
+            <strong>
+              {settings.youSplit}% /{" "}
+              {settings.broSplit}%
+            </strong>
+
           </div>
 
         </div>
