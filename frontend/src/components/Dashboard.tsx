@@ -9,52 +9,49 @@ import {
   getTotalReinvestment,
   getTotalLoanPayments,
   getTotalLoanReceived,
-  getRemainingLoan,
   getMemberContribution,
+  getTotalMoneyLent,
+  getOutstandingMoneyLent,
   type InvestmentRecord,
   type JointInvestSettings,
 } from "../data/investmentData";
 
 function Dashboard() {
-  // =====================================================
-  // DATA
-  // =====================================================
-
   const [records, setRecords] =
-    useState<InvestmentRecord[]>(getRecords());
+    useState<InvestmentRecord[]>(
+      getRecords()
+    );
 
   const [settings, setSettings] =
-    useState<JointInvestSettings>(getSettings());
-
-  // =====================================================
-  // AUTOMATICALLY REFRESH WHEN RECORDS CHANGE
-  // =====================================================
+    useState<JointInvestSettings>(
+      getSettings()
+    );
 
   useEffect(() => {
-    const refreshData = () => {
+    const refresh = () => {
       setRecords(getRecords());
       setSettings(getSettings());
     };
 
     window.addEventListener(
       "jointInvestRecordsUpdated",
-      refreshData
+      refresh
     );
 
     window.addEventListener(
       "jointInvestSettingsUpdated",
-      refreshData
+      refresh
     );
 
     return () => {
       window.removeEventListener(
         "jointInvestRecordsUpdated",
-        refreshData
+        refresh
       );
 
       window.removeEventListener(
         "jointInvestSettingsUpdated",
-        refreshData
+        refresh
       );
     };
   }, []);
@@ -64,10 +61,16 @@ function Dashboard() {
   // =====================================================
 
   const yourContribution =
-    getMemberContribution(records, "You");
+    getMemberContribution(
+      records,
+      "You"
+    );
 
   const broContribution =
-    getMemberContribution(records, "Bro");
+    getMemberContribution(
+      records,
+      "Bro"
+    );
 
   const totalInvested =
     getTotalContributions(records);
@@ -97,20 +100,33 @@ function Dashboard() {
   // LOAN
   // =====================================================
 
-  // IMPORTANT:
-  // Loan amount now comes from Records
   const totalLoanReceived =
     getTotalLoanReceived(records);
 
   const totalLoanPayments =
     getTotalLoanPayments(records);
 
-  // Remaining loan also comes from Records
   const loanRemaining =
-    getRemainingLoan(records);
+    Math.max(
+      totalLoanReceived -
+        totalLoanPayments,
+      0
+    );
 
   // =====================================================
-  // CURRENT VALUE
+  // MONEY LENT
+  // =====================================================
+
+  const totalMoneyLent =
+    getTotalMoneyLent(records);
+
+  const outstandingMoneyLent =
+    getOutstandingMoneyLent(
+      records
+    );
+
+  // =====================================================
+  // CURRENT INVESTMENT VALUE
   // =====================================================
 
   const currentValue =
@@ -124,41 +140,39 @@ function Dashboard() {
 
   const yourOwnership =
     totalInvested > 0
-      ? (yourContribution / totalInvested) * 100
+      ? (yourContribution /
+          totalInvested) *
+        100
       : 0;
 
   const broOwnership =
     totalInvested > 0
-      ? (broContribution / totalInvested) * 100
+      ? (broContribution /
+          totalInvested) *
+        100
       : 0;
 
-  // =====================================================
-  // MONEY FORMAT
-  // =====================================================
-
-  const formatMoney = (amount: number) => {
-    return `KES ${amount.toLocaleString()}`;
-  };
-
-  // =====================================================
-  // PAGE
-  // =====================================================
+  const formatMoney = (
+    amount: number
+  ) =>
+    `KES ${amount.toLocaleString()}`;
 
   return (
     <main className="dashboard">
 
-      {/* =================================================
-          HEADER
-      ================================================= */}
-
       <header className="dashboard-header">
 
         <div>
-          <h1>Dashboard</h1>
+
+          <h1>
+            Dashboard
+          </h1>
 
           <p>
-            Welcome to your joint investment tracker.
+            Welcome to your joint
+            investment tracker.
           </p>
+
         </div>
 
         <button className="profile-button">
@@ -167,82 +181,92 @@ function Dashboard() {
 
       </header>
 
-      {/* =================================================
-          SUMMARY CARDS
-      ================================================= */}
+      {/* SUMMARY */}
 
       <section className="summary-cards">
 
-        {/* TOTAL INVESTED */}
-
         <div className="card">
 
-          <span>Total Invested</span>
+          <span>
+            Total Invested
+          </span>
 
           <h2>
-            {formatMoney(totalInvested)}
+            {formatMoney(
+              totalInvested
+            )}
           </h2>
 
         </div>
 
-        {/* CURRENT VALUE */}
-
         <div className="card">
 
-          <span>Current Value</span>
+          <span>
+            Current Value
+          </span>
 
           <h2>
-            {formatMoney(currentValue)}
+            {formatMoney(
+              currentValue
+            )}
           </h2>
 
         </div>
 
-        {/* PROFIT */}
-
         <div className="card">
 
-          <span>Total Profit</span>
+          <span>
+            Total Profit
+          </span>
 
           <h2 className="profit">
-            +{formatMoney(totalProfit)}
+            +{formatMoney(
+              totalProfit
+            )}
           </h2>
 
         </div>
 
-        {/* LOAN */}
-
         <div className="card">
 
-          <span>Loan Remaining</span>
+          <span>
+            Loan Remaining
+          </span>
 
           <h2>
-            {formatMoney(loanRemaining)}
+            {formatMoney(
+              loanRemaining
+            )}
           </h2>
 
         </div>
 
       </section>
 
-      {/* =================================================
-          INVESTMENT BREAKDOWN
-      ================================================= */}
+      {/* MEMBERS */}
 
       <section className="members">
 
-        <h2>Our Investment</h2>
+        <h2>
+          Our Investment
+        </h2>
 
         <div className="member-grid">
 
-          {/* YOU */}
-
           <div className="member-card">
 
-            <h3>👤 You</h3>
+            <h3>
+              👤 You
+            </h3>
 
-            <p>Contribution</p>
+            <p>
+              Contribution
+            </p>
 
             <strong>
-              {formatMoney(yourContribution)}
+              {formatMoney(
+                yourContribution
+              )}
             </strong>
 
             <p>
@@ -252,16 +276,20 @@ function Dashboard() {
 
           </div>
 
-          {/* BRO */}
-
           <div className="member-card">
 
-            <h3>👨‍🦱 Bro</h3>
+            <h3>
+              👨‍🦱 Bro
+            </h3>
 
-            <p>Contribution</p>
+            <p>
+              Contribution
+            </p>
 
             <strong>
-              {formatMoney(broContribution)}
+              {formatMoney(
+                broContribution
+              )}
             </strong>
 
             <p>
@@ -275,17 +303,15 @@ function Dashboard() {
 
       </section>
 
-      {/* =================================================
-          SACCO
-      ================================================= */}
+      {/* SACCO */}
 
       <section className="loan-section">
 
-        <h2>🏦 Umoja United SACCO</h2>
+        <h2>
+          🏦 Umoja United SACCO
+        </h2>
 
         <div className="loan-card">
-
-          {/* ORIGINAL LOAN */}
 
           <div>
 
@@ -294,12 +320,12 @@ function Dashboard() {
             </span>
 
             <strong>
-              {formatMoney(totalLoanReceived)}
+              {formatMoney(
+                totalLoanReceived
+              )}
             </strong>
 
           </div>
-
-          {/* MONTHLY REPAYMENT */}
 
           <div>
 
@@ -315,8 +341,6 @@ function Dashboard() {
 
           </div>
 
-          {/* PAID */}
-
           <div>
 
             <span>
@@ -324,12 +348,12 @@ function Dashboard() {
             </span>
 
             <strong>
-              {formatMoney(totalLoanPayments)}
+              {formatMoney(
+                totalLoanPayments
+              )}
             </strong>
 
           </div>
-
-          {/* REMAINING */}
 
           <div>
 
@@ -338,12 +362,12 @@ function Dashboard() {
             </span>
 
             <strong>
-              {formatMoney(loanRemaining)}
+              {formatMoney(
+                loanRemaining
+              )}
             </strong>
 
           </div>
-
-          {/* STATUS */}
 
           <div>
 
@@ -367,9 +391,49 @@ function Dashboard() {
 
       </section>
 
-      {/* =================================================
-          QUICK FINANCIAL SUMMARY
-      ================================================= */}
+      {/* MONEY LENT */}
+
+      <section className="loan-section">
+
+        <h2>
+          🤝 Money Lent Out
+        </h2>
+
+        <div className="loan-card">
+
+          <div>
+
+            <span>
+              Total Lent
+            </span>
+
+            <strong>
+              {formatMoney(
+                totalMoneyLent
+              )}
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span>
+              Still Owed
+            </span>
+
+            <strong>
+              {formatMoney(
+                outstandingMoneyLent
+              )}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      {/* FINANCIAL SUMMARY */}
 
       <section className="loan-section">
 
@@ -379,8 +443,6 @@ function Dashboard() {
 
         <div className="loan-card">
 
-          {/* PROFIT */}
-
           <div>
 
             <span>
@@ -388,12 +450,12 @@ function Dashboard() {
             </span>
 
             <strong className="profit">
-              {formatMoney(totalProfit)}
+              {formatMoney(
+                totalProfit
+              )}
             </strong>
 
           </div>
-
-          {/* REINVESTMENT */}
 
           <div>
 
@@ -409,8 +471,6 @@ function Dashboard() {
 
           </div>
 
-          {/* WITHDRAWALS */}
-
           <div>
 
             <span>
@@ -424,8 +484,6 @@ function Dashboard() {
             </strong>
 
           </div>
-
-          {/* OWNERSHIP */}
 
           <div>
 
