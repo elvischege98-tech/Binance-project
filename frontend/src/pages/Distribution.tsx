@@ -1,371 +1,470 @@
+import { useEffect, useState } from "react";
+
 import {
   getRecords,
   getSettings,
-  getTotalProfit,
   getTotalLoanPayments,
-  getTotalReinvestment,
+  getTotalLoanReceived,
+  getTotalProfit,
 } from "../data/investmentData";
 
-function Distribution() {
-  const records = getRecords();
-  const settings = getSettings();
+function SACCOLoan() {
+  const [records, setRecords] = useState(
+    getRecords()
+  );
 
-  // ==========================================
-  // INFORMATION FROM RECORDS
-  // ==========================================
+  const [settings, setSettings] = useState(
+    getSettings()
+  );
 
-  const monthlyProfit = getTotalProfit(records);
+  // =====================================================
+  // REFRESH WHEN RECORDS CHANGE
+  // =====================================================
 
-  const recordedLoanPayment =
+  useEffect(() => {
+    const refreshData = () => {
+      setRecords(getRecords());
+      setSettings(getSettings());
+    };
+
+    window.addEventListener(
+      "jointInvestRecordsUpdated",
+      refreshData
+    );
+
+    window.addEventListener(
+      "jointInvestSettingsUpdated",
+      refreshData
+    );
+
+    return () => {
+      window.removeEventListener(
+        "jointInvestRecordsUpdated",
+        refreshData
+      );
+
+      window.removeEventListener(
+        "jointInvestSettingsUpdated",
+        refreshData
+      );
+    };
+  }, []);
+
+  // =====================================================
+  // LOAN CALCULATIONS
+  // =====================================================
+
+  const originalLoan =
+    getTotalLoanReceived(records);
+
+  const amountPaid =
     getTotalLoanPayments(records);
 
-  const recordedReinvestment =
-    getTotalReinvestment(records);
-
-  // ==========================================
-  // LOAN PAYMENT RULE
-  // ==========================================
-
-  const loanPayment =
-    monthlyProfit >= settings.loanRepayment
-      ? recordedLoanPayment
-      : 0;
-
-  // ==========================================
-  // REMAINING PROFIT
-  // ==========================================
-
-  const remainingProfit = Math.max(
-    monthlyProfit - loanPayment,
+  const remainingLoan = Math.max(
+    originalLoan - amountPaid,
     0
   );
 
-  // ==========================================
-  // TAKE-HOME
-  // ==========================================
+  const monthlyRepayment =
+    settings.loanRepayment;
 
-  const takeHome = Math.max(
-    remainingProfit - recordedReinvestment,
+  const totalProfit =
+    getTotalProfit(records);
+
+  const paymentRequired =
+    totalProfit >= monthlyRepayment;
+
+  // =====================================================
+  // 50/50 RESPONSIBILITY
+  // =====================================================
+
+  const yourResponsibility =
+    originalLoan * (settings.youSplit / 100);
+
+  const broResponsibility =
+    originalLoan * (settings.broSplit / 100);
+
+  const yourPaid =
+    amountPaid * (settings.youSplit / 100);
+
+  const broPaid =
+    amountPaid * (settings.broSplit / 100);
+
+  const yourRemaining = Math.max(
+    yourResponsibility - yourPaid,
     0
   );
 
-  // ==========================================
-  // ACTUAL REINVESTMENT PERCENTAGE
-  // ==========================================
+  const broRemaining = Math.max(
+    broResponsibility - broPaid,
+    0
+  );
 
-  const reinvestmentPercentage =
-    remainingProfit > 0
-      ? (recordedReinvestment / remainingProfit) * 100
-      : 0;
+  // =====================================================
+  // MONEY FORMAT
+  // =====================================================
 
-  // ==========================================
-  // ACTUAL TAKE-HOME PERCENTAGE
-  // ==========================================
-
-  const takeHomePercentage =
-    remainingProfit > 0
-      ? (takeHome / remainingProfit) * 100
-      : 0;
-
-  // ==========================================
-  // MEMBER TAKE-HOME BREAKDOWN
-  // ==========================================
-
-  const yourShare =
-    takeHome * (settings.youSplit / 100);
-
-  const broShare =
-    takeHome * (settings.broSplit / 100);
+  const formatMoney = (amount: number) => {
+    return `KES ${amount.toLocaleString()}`;
+  };
 
   return (
     <main className="dashboard">
 
-      {/* ========================= */}
-      {/* HEADER */}
-      {/* ========================= */}
+      {/* =================================================
+          HEADER
+      ================================================= */}
 
       <header className="dashboard-header">
+
         <div>
-          <h1>💰 Profit Distribution</h1>
+          <h1>🏦 SACCO Loan</h1>
 
           <p>
-            See how our recorded investment profit
-            is distributed.
+            Track your Umoja United SACCO loan and
+            repayments.
           </p>
         </div>
+
       </header>
 
-      {/* ========================= */}
-      {/* SUMMARY CARDS */}
-      {/* ========================= */}
+      {/* =================================================
+          LOAN SUMMARY
+      ================================================= */}
 
       <section className="summary-cards">
 
         <div className="card">
-          <span>Monthly Profit</span>
+
+          <h3>Original Loan</h3>
 
           <h2>
-            KES {monthlyProfit.toLocaleString()}
+            {formatMoney(originalLoan)}
           </h2>
+
+          <p>
+            Total loan received
+          </p>
+
         </div>
 
         <div className="card">
-          <span>Loan Payment</span>
+
+          <h3>Amount Paid</h3>
 
           <h2>
-            KES {loanPayment.toLocaleString()}
+            {formatMoney(amountPaid)}
           </h2>
+
+          <p>
+            Total repayments
+          </p>
+
         </div>
 
         <div className="card">
-          <span>Reinvestment</span>
+
+          <h3>Loan Remaining</h3>
 
           <h2>
-            KES {recordedReinvestment.toLocaleString()}
+            {formatMoney(remainingLoan)}
           </h2>
+
+          <p>
+            Outstanding balance
+          </p>
+
         </div>
 
         <div className="card">
-          <span>Take-home</span>
+
+          <h3>Monthly Target</h3>
 
           <h2>
-            KES {takeHome.toLocaleString()}
+            {formatMoney(monthlyRepayment)}
           </h2>
+
+          <p>
+            Required repayment
+          </p>
+
         </div>
 
       </section>
 
-      {/* ========================= */}
-      {/* LOAN PAYMENT */}
-      {/* ========================= */}
+      {/* =================================================
+          PAYMENT STATUS
+      ================================================= */}
 
-      <section className="loan-section">
+      <section
+        className="card"
+        style={{ marginTop: "20px" }}
+      >
 
-        <h2>🏦 Mandatory Loan Payment</h2>
+        <h2>Payment Status</h2>
 
-        <div className="loan-card">
-
-          <div>
-            <span>Monthly Profit</span>
-
-            <strong>
-              KES {monthlyProfit.toLocaleString()}
-            </strong>
-          </div>
-
-          <div>
-            <span>Required Payment</span>
-
-            <strong>
-              KES {loanPayment.toLocaleString()}
-            </strong>
-          </div>
-
-          <div>
-            <span>Monthly Target</span>
-
-            <strong>
-              KES {settings.loanRepayment.toLocaleString()}
-            </strong>
-          </div>
-
-          <div>
-            <span>Status</span>
-
-            <strong
-              className={
-                loanPayment > 0
-                  ? "status"
-                  : "status warning"
-              }
-            >
-              {loanPayment > 0
-                ? "Payment Recorded"
-                : "Not Required"}
-            </strong>
-          </div>
-
-        </div>
-
-        <p className="loan-note">
-          A KES{" "}
-          {settings.loanRepayment.toLocaleString()}{" "}
-          payment is required when monthly profit
-          reaches KES{" "}
-          {settings.loanRepayment.toLocaleString()}{" "}
-          or more.
+        <p>
+          Current recorded profit:{" "}
+          <strong>
+            {formatMoney(totalProfit)}
+          </strong>
         </p>
 
-      </section>
-
-      {/* ========================= */}
-      {/* REMAINING PROFIT */}
-      {/* ========================= */}
-
-      <section className="members">
-
-        <h2>📊 Remaining Profit Allocation</h2>
-
-        <div className="member-grid">
-
-          {/* REINVESTMENT */}
-
-          <div className="member-card">
-
-            <h2>📈 Reinvestment</h2>
-
-            <p>Recorded Amount</p>
-
+        {paymentRequired ? (
+          <div
+            style={{
+              marginTop: "15px",
+              padding: "15px",
+              borderRadius: "10px",
+              background: "#f5f5f5",
+            }}
+          >
+            ✅{" "}
             <strong>
-              KES{" "}
-              {recordedReinvestment.toLocaleString()}
-            </strong>
-
-            <p>Percentage of Remaining Profit</p>
-
-            <strong>
-              {reinvestmentPercentage.toFixed(2)}%
+              Payment Required
             </strong>
 
             <p>
-              Money added back into our crypto
-              investment.
+              The investment has enough profit to
+              cover this month's{" "}
+              {formatMoney(monthlyRepayment)} SACCO
+              repayment.
             </p>
-
           </div>
-
-          {/* TAKE HOME */}
-
-          <div className="member-card">
-
-            <h2>💵 Take-home</h2>
-
-            <p>Available Amount</p>
-
+        ) : (
+          <div
+            style={{
+              marginTop: "15px",
+              padding: "15px",
+              borderRadius: "10px",
+              background: "#f5f5f5",
+            }}
+          >
+            ⏳{" "}
             <strong>
-              KES {takeHome.toLocaleString()}
-            </strong>
-
-            <p>Percentage of Remaining Profit</p>
-
-            <strong>
-              {takeHomePercentage.toFixed(2)}%
+              Payment Not Required Yet
             </strong>
 
             <p>
-              Money available for you and your bro.
+              A repayment is required when monthly
+              profit reaches{" "}
+              {formatMoney(monthlyRepayment)}.
             </p>
-
           </div>
-
-        </div>
+        )}
 
       </section>
 
-      {/* ========================= */}
-      {/* MEMBER BREAKDOWN */}
-      {/* ========================= */}
+      {/* =================================================
+          MEMBER RESPONSIBILITY
+      ================================================= */}
 
-      <section className="loan-section">
+      <section
+        className="card"
+        style={{ marginTop: "20px" }}
+      >
 
-        <h2>👥 Take-home Breakdown</h2>
+        <h2>🤝 Loan Responsibility</h2>
 
-        <div className="loan-card">
+        <p>
+          The loan responsibility is split 50/50
+          between you and Bro.
+        </p>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns:
+              "repeat(auto-fit, minmax(250px, 1fr))",
+            gap: "20px",
+            marginTop: "20px",
+          }}
+        >
 
           {/* YOU */}
 
-          <div>
-            <span>
-              👤 You — {settings.youSplit}%
-            </span>
+          <div className="card">
 
-            <strong>
-              KES {yourShare.toLocaleString()}
-            </strong>
+            <h3>👤 You</h3>
+
+            <p>
+              Loan responsibility
+            </p>
+
+            <h2>
+              {formatMoney(yourResponsibility)}
+            </h2>
+
+            <p>
+              Paid:{" "}
+              <strong>
+                {formatMoney(yourPaid)}
+              </strong>
+            </p>
+
+            <p>
+              Remaining:{" "}
+              <strong>
+                {formatMoney(yourRemaining)}
+              </strong>
+            </p>
+
+            <p>
+              Share:{" "}
+              <strong>
+                {settings.youSplit}%
+              </strong>
+            </p>
+
           </div>
 
           {/* BRO */}
 
-          <div>
-            <span>
-              👨‍🦱 Bro — {settings.broSplit}%
-            </span>
+          <div className="card">
 
-            <strong>
-              KES {broShare.toLocaleString()}
-            </strong>
-          </div>
+            <h3>👤 Bro</h3>
 
-          {/* TOTAL */}
+            <p>
+              Loan responsibility
+            </p>
 
-          <div>
-            <span>Total Take-home</span>
+            <h2>
+              {formatMoney(broResponsibility)}
+            </h2>
 
-            <strong>
-              KES {takeHome.toLocaleString()}
-            </strong>
-          </div>
+            <p>
+              Paid:{" "}
+              <strong>
+                {formatMoney(broPaid)}
+              </strong>
+            </p>
 
-        </div>
+            <p>
+              Remaining:{" "}
+              <strong>
+                {formatMoney(broRemaining)}
+              </strong>
+            </p>
 
-      </section>
+            <p>
+              Share:{" "}
+              <strong>
+                {settings.broSplit}%
+              </strong>
+            </p>
 
-      {/* ========================= */}
-      {/* DISTRIBUTION SUMMARY */}
-      {/* ========================= */}
-
-      <section className="loan-section">
-
-        <h2>📋 Distribution Summary</h2>
-
-        <div className="loan-card">
-
-          <div>
-            <span>Original Profit</span>
-
-            <strong>
-              KES {monthlyProfit.toLocaleString()}
-            </strong>
-          </div>
-
-          <div>
-            <span>Loan Repayment</span>
-
-            <strong>
-              - KES {loanPayment.toLocaleString()}
-            </strong>
-          </div>
-
-          <div>
-            <span>Remaining Profit</span>
-
-            <strong>
-              KES {remainingProfit.toLocaleString()}
-            </strong>
-          </div>
-
-          <div>
-            <span>Reinvestment</span>
-
-            <strong>
-              KES {recordedReinvestment.toLocaleString()}
-            </strong>
-          </div>
-
-          <div>
-            <span>Take-home</span>
-
-            <strong>
-              KES {takeHome.toLocaleString()}
-            </strong>
           </div>
 
         </div>
 
       </section>
+
+      {/* =================================================
+          LOAN HISTORY
+      ================================================= */}
+
+      <section
+        className="card"
+        style={{ marginTop: "20px" }}
+      >
+
+        <h2>📋 Loan History</h2>
+
+        <p>
+          Loan transactions recorded in Joint Invest.
+        </p>
+
+        <div
+          style={{
+            overflowX: "auto",
+            marginTop: "20px",
+          }}
+        >
+
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+            }}
+          >
+
+            <thead>
+
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Description</th>
+                <th>Amount</th>
+              </tr>
+
+            </thead>
+
+            <tbody>
+
+              {records
+                .filter(
+                  (record) =>
+                    record.type ===
+                      "Loan Received" ||
+                    record.type ===
+                      "Loan Payment"
+                )
+                .sort(
+                  (a, b) =>
+                    new Date(b.date).getTime() -
+                    new Date(a.date).getTime()
+                )
+                .map((record) => (
+
+                  <tr key={record.id}>
+
+                    <td>
+                      {record.date}
+                    </td>
+
+                    <td>
+                      {record.type}
+                    </td>
+
+                    <td>
+                      {record.description}
+                    </td>
+
+                    <td>
+                      {formatMoney(
+                        record.amount
+                      )}
+                    </td>
+
+                  </tr>
+
+                ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </section>
+
+      {/* =================================================
+          FOOTER
+      ================================================= */}
+
+      <footer
+        style={{
+          marginTop: "30px",
+          textAlign: "center",
+        }}
+      >
+        <p>
+          Umoja United SACCO • Joint Invest
+        </p>
+      </footer>
 
     </main>
   );
 }
 
-export default Distribution;
+export default SACCOLoan;
