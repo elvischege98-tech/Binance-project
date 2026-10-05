@@ -268,7 +268,7 @@ function SACCOLoan() {
 
         <p>
           The loan responsibility is split 50/50
-          between you and Bro.
+          between Elvis and Mark.
         </p>
 
         <div
