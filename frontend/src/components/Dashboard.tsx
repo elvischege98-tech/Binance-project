@@ -176,7 +176,7 @@ function Dashboard() {
         </div>
 
         <button className="profile-button">
-          👤 You & Bro
+          Elvis & Mark
         </button>
 
       </header>
@@ -256,7 +256,7 @@ function Dashboard() {
           <div className="member-card">
 
             <h3>
-              👤 You
+              Elvis
             </h3>
 
             <p>
@@ -279,7 +279,7 @@ function Dashboard() {
           <div className="member-card">
 
             <h3>
-              👨‍🦱 Bro
+              👨‍🦱 Mark
             </h3>
 
             <p>

@@ -285,7 +285,7 @@ function SACCOLoan() {
 
           <div className="card">
 
-            <h3>👤 You</h3>
+            <h3>Elvis</h3>
 
             <p>
               Loan responsibility
@@ -322,7 +322,7 @@ function SACCOLoan() {
 
           <div className="card">
 
-            <h3>👤 Bro</h3>
+            <h3>Mark</h3>
 
             <p>
               Loan responsibility

@@ -116,3 +116,19 @@ CREATE TABLE IF NOT EXISTS settings (
 
     CHECK (you_split + bro_split = 100)
 );
+
+-- =====================================================
+-- USERS / AUTHENTICATION
+-- =====================================================
+
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    name TEXT NOT NULL,
+
+    email TEXT NOT NULL UNIQUE,
+
+    password_hash TEXT NOT NULL,
+
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

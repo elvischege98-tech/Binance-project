@@ -241,7 +241,7 @@ function Investments() {
                 MEMBER 01
               </span>
 
-              <h2>You</h2>
+              <h2>Elvis</h2>
 
               <p>
                 Your contribution to the partnership
@@ -334,7 +334,7 @@ function Investments() {
                 MEMBER 02
               </span>
 
-              <h2>Bro</h2>
+              <h2>Mark</h2>
 
               <p>
                 Your partner in the investment
@@ -374,7 +374,7 @@ function Investments() {
             </div>
 
             <div>
-              <span>Bro's Profit</span>
+              <span>Mark's Profit</span>
 
               <strong className="profit">
                 +{money(broProfitShare)}
@@ -388,7 +388,7 @@ function Investments() {
 
             <div className="progress-label">
 
-              <span>Bro's investment</span>
+              <span>Mark's investment</span>
 
               <strong>
                 {broInvestmentShare}%
@@ -459,7 +459,7 @@ function Investments() {
             <div className="split-person-top">
 
               <span>
-                👤 You
+                Elvis
               </span>
 
               <strong>
@@ -491,7 +491,7 @@ function Investments() {
             <div className="split-person-top">
 
               <span>
-                👨‍🦱 Bro
+                Mark
               </span>
 
               <strong>

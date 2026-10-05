@@ -61,7 +61,7 @@ function Members() {
 
         {/* YOU */}
         <div className="member-card">
-          <h2>👤 You</h2>
+          <h2>Elvis</h2>
 
           <p>Contribution</p>
           <strong>
@@ -86,7 +86,7 @@ function Members() {
 
         {/* BRO */}
         <div className="member-card">
-          <h2>👨‍🦱 Bro</h2>
+          <h2>Mark</h2>
 
           <p>Contribution</p>
           <strong>

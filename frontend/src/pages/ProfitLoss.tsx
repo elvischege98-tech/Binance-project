@@ -279,11 +279,11 @@ function ProfitLoss() {
           <div className="card">
 
             <h2>
-              👤 You
+              Elvis
             </h2>
 
             <p>
-              Your Investment
+              Elvis' Investment
             </p>
 
             <strong>
@@ -293,7 +293,7 @@ function ProfitLoss() {
             </strong>
 
             <p>
-              Your Ownership
+              Elvis' Ownership
             </p>
 
             <strong>
@@ -301,7 +301,7 @@ function ProfitLoss() {
             </strong>
 
             <p>
-              Your Profit
+              Elvis' Profit
             </p>
 
             <strong
@@ -315,7 +315,7 @@ function ProfitLoss() {
             </strong>
 
             <p>
-              Your Current Value
+              Elvis' Current Value
             </p>
 
             <strong>
@@ -333,7 +333,7 @@ function ProfitLoss() {
           <div className="card">
 
             <h2>
-              👨‍🦱 Bro
+              Mark
             </h2>
 
             <p>
@@ -347,7 +347,7 @@ function ProfitLoss() {
             </strong>
 
             <p>
-              Bro's Ownership
+              Mark's Ownership
             </p>
 
             <strong>
@@ -355,7 +355,7 @@ function ProfitLoss() {
             </strong>
 
             <p>
-              Bro's Profit
+              Mark's Profit
             </p>
 
             <strong
@@ -369,7 +369,7 @@ function ProfitLoss() {
             </strong>
 
             <p>
-              Bro's Current Value
+              Mark's Current Value
             </p>
 
             <strong>

@@ -157,7 +157,7 @@ function Settings() {
             <div className="setting-info">
               <h3>💵 Take-home</h3>
               <p>
-                Percentage of remaining profit available to you and your bro.
+                Percentage of remaining profit available to Elvis and Mark.
               </p>
             </div>
 
@@ -248,9 +248,9 @@ function Settings() {
           {/* YOU */}
           <div className="setting-row">
             <div className="setting-info">
-              <h3>👤 You</h3>
+              <h3>Elvis</h3>
               <p>
-                Your share of the take-home profit.
+                Elvis' share of the take-home profit.
               </p>
             </div>
 
@@ -275,9 +275,9 @@ function Settings() {
           {/* BRO */}
           <div className="setting-row">
             <div className="setting-info">
-              <h3>👥 Bro</h3>
+              <h3>Mark</h3>
               <p>
-                Your bro's share of the take-home profit.
+                Mark's share of the take-home profit.
               </p>
             </div>
 
